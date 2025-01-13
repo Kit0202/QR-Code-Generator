@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}vCard - QR Code Generator{% endblock %}
+
+{% block content %}
+
+<section class="url">
+    <div class="container mt-5 form-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-4 mt-md-0">
+                <h2 class="text-center">Create vCard QR Code</h2>
+                <form id="vcardForm" action="" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" name="dob" required>
+                        <small class="form-text text-muted">Can also type in the format DD-MM-YYYY</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Upload Profile Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <small class="form-text text-muted">Optional. Upload a profile picture (JPEG, PNG).</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Enter phone number" inputmode="numeric" pattern="[0-9]*" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="company" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="company" name="company" placeholder="Enter your company" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="job_title" class="form-label">Job Title</label>
+                        <input type="text" class="form-control" id="job_title" name="job_title" placeholder="Enter your job title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="website" class="form-label">Website</label>
+                        <input type="url" class="form-control" id="website" name="website" placeholder="Enter your website" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address" required>
+                    </div>
+                    <button type="submit" class="generate-btn">Generate QR Code</button>
+                </form>
+            </div>
+
+            <div class="col-md-4 mt-3 mt-md-0 mb-5 qr-container">
+                <h5>Your QR Code:</h5>
+                {% if qr_code %}
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="Generated QR Code">
+                {% else %}
+                    <img loading="lazy" class="img-fluid" src="{{ url_for('static', filename='img/placeholder.png') }}" alt="QR Code Placeholder">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Allow only alphabets and spaces for the name
+    document.getElementById('name').addEventListener('input', function (e) {
+        this.value = this.value.replace(/[^a-zA-Z\s]/g, '');  // Replace anything that's not a letter or space
+    });
+
+    // Allow only numbers for the phone number
+    document.getElementById('phone_number').addEventListener('input', function (e) {
+        this.value = this.value.replace(/[^0-9]/g, '');  // Replace anything that's not a number
+    });
+</script>
+
+{% endblock %}

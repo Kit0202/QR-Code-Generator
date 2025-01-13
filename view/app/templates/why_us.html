@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Why Us - QR Code Generator{% endblock %}
+
+{% block content %}
+
+{% include 'banner.html' %}
+
+<section class="section_why py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-5 px-xl-5 d-none d-md-block">
+                <img loading="lazy" src="{{ url_for('static', filename='img/home/why_us.webp') }}" alt="Home Content" class="img-fluid px-xl-4">
+            </div>
+            <div class="col-lg-1 d-none d-xl-block"></div>
+            <div class="col-md-7 col-lg-6">
+                <h2>Why Choose <span class="text-brand-primary-light">Us</span> ?</h2>
+                <div class="col-sm-10 mx-auto py-3 px-5 d-md-none">
+                    <img loading="lazy" src="{{ url_for('static', filename='img/home/why_us.webp') }}" alt="Home Content" class="img-fluid">
+                </div>
+                <ul class="text-neutral-grey pl-4">
+                    <li><strong>QR Code Statistics</strong></li>
+                    <li><strong>Customized Colors & Shapes for QR Codes</strong></li>
+                    <li><strong>No Coding Required</strong></li>
+                    <li><strong>Fully customized landing pages</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="what-we-suggest py-3" style="background-color: #F5F5F5;">
+    <div class="container">
+        <div class="row col-lg-10 mx-auto">
+            <div class="col-md-7 my-auto text-md-start text-center order-md-1 order-2">
+                <h2 class="text-capitalize fw-bold pt-2 text-dark mb-4">Manage all your QR Codes in one place</h2>
+                <p class="mb-5 lh-lg text-desc text-start">
+                    We will provide your personal dashboard with all your QR Codes generated.
+                    We also keep track of how many people scan your QR Codes.
+                </p>
+            </div>
+            <div class="col-md-5 py-5 order-md-2 order-1 text-center text-lg-start">
+                <img loading="lazy" class="img-fluid" src="/static/img/why_us/manage.webp" alt="Manage">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="qr-code-generator py-3">
+    <div class="container">
+        <div class="row col-lg-10 mx-auto">
+            <div class="col-md-5 order-1 py-5 text-center text-lg-start">
+                <img loading="lazy" class="img-fluid" src="/static/img/why_us/download.webp" alt="QR Code Generator">
+            </div>
+            <div class="col-md-7 order-2 my-auto text-md-start text-center">
+                <h2 class="text-capitalize fw-bold pt-2 text-dark mb-4">Download your QR Codes</h2>
+                <p class="lh-lg mb-5 text-desc text-start">
+                    In your dashboard you will also be able to download all your QR Codes.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

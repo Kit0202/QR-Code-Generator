@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Pricing - QR Code Generator{% endblock %}
+
+{% block content %}
+
+{% include 'banner.html' %}
+
+<section class="pricing-section py-5">
+    <div class="container">
+        <h2 class="text-center text-bold mb-5">Our Pricing Add-Ons</h2>
+
+        <div class="row">
+            <!-- Basic Plan -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header text-center bg-primary text-white">
+                        <h4 class="mb-0">Basic Add-On</h4>
+                    </div>
+                    <div class="card-price text-center">
+                        <h2 class="mb-4">$0</h2>
+                        <p class="mb-4">Perfect for individual use</p>
+                        <ul class="list-unstyled mb-4">
+                            <li><i class="bi bi-check-circle"></i> Create 10 QR codes per month</li>
+                            <li><i class="bi bi-check-circle"></i> Basic analytics</li>
+                            <li><i class="bi bi-check-circle"></i> Ads on free QR codes</li>
+                        </ul>
+                        <a href="#" class="btn-basic">Get Started</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standard Plan -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header text-center bg-success text-white">
+                        <h4 class="mb-0">Standard Add-On</h4>
+                    </div>
+                    <div class="card-price text-center">
+                        <h2 class="mb-4">$9.99 / month</h2>
+                        <p class="mb-4">For small businesses and regular users</p>
+                        <ul class="list-unstyled mb-4">
+                            <li><i class="bi bi-check-circle"></i> Create 50 QR codes per month</li>
+                            <li><i class="bi bi-check-circle"></i> Advanced analytics</li>
+                            <li><i class="bi bi-check-circle"></i> Remove ads from QR codes</li>
+                        </ul>
+                        <a href="#" class="btn-standard">Subscribe Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header text-center bg-warning text-white">
+                        <h4 class="mb-0">Premium Add-On</h4>
+                    </div>
+                    <div class="card-price text-center">
+                        <h2 class="mb-4">$19.99 / month</h2>
+                        <p class="mb-4">For professionals and enterprises</p>
+                        <ul class="list-unstyled mb-4">
+                            <li><i class="bi bi-check-circle"></i> Create unlimited QR codes</li>
+                            <li><i class="bi bi-check-circle"></i> Priority analytics</li>
+                            <li><i class="bi bi-check-circle"></i> No ads on QR codes</li>
+                            <li><i class="bi bi-check-circle"></i> Custom QR code styles</li>
+                        </ul>
+                        <a href="#" class="btn-premium">Start Free Trial</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

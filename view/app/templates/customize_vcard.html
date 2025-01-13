@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Customize vCard QR Code{% endblock %}
+
+{% block content %}
+<section class="customize-vcard">
+    <div class="container mt-5">
+        <h2 class="text-center">Customize Your vCard QR Code</h2>
+
+        <form method="POST">
+            <div class="mb-3">
+                <label for="fill_color" class="form-label">Fill Color:</label>
+                <input type="color" id="fill_color" name="fill_color" value="#000000" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="back_color" class="form-label">Background Color:</label>
+                <input type="color" id="back_color" name="back_color" value="#ffffff" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="error_correction" class="form-label">Error Correction Level:</label>
+                <select id="error_correction" name="error_correction" required>
+                    <option value="L">Low (L)</option>
+                    <option value="M">Medium (M)</option>
+                    <option value="Q">Quartile (Q)</option>
+                    <option value="H">High (H)</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="box_size" class="form-label">Box Size:</label>
+                <input type="number" id="box_size" name="box_size" value="10" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="border" class="form-label">Border Size:</label>
+                <input type="number" id="border" name="border" value="4" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generate QR Code</button>
+        </form>
+
+        {% if qr_code %}
+            <h3 class="mt-4">Your Customized vCard QR Code</h3>
+            <img src="{{ qr_code }}" alt="QR Code" class="img-fluid">
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

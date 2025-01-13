@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}QR Code Analytics{% endblock %}
+
+{% block content %}
+<section class="container mt-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="{{ url_for('main.dashboard') }}" class="list-group-item list-group-item-action">My QR Codes</a>
+                <a href="{{ url_for('main.analytics') }}" class="list-group-item list-group-item-action active">Analytics</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2>QR Code Analytics</h2>
+            <p>View the scan statistics for your generated QR codes.</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>QR Code</th>
+                        <th>Scan Count</th>
+                        <th>Last Scan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for qr_id, data in analytics_data.items() %}
+                    <tr>
+                        <td>{{ data.name }}</td>
+                        <td>{{ data.scan_count }}</td>
+                        <td>{{ data.last_scan }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

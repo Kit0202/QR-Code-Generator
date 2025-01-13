@@ -1,0 +1,14 @@
+<section class="section_page_banner py-4 gradient-background">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-7 col-lg-6">
+                <h1 class="text-black text-bold mb-md-4">{{ banner_title }}</h1>
+                <p class="service_detail_text text-black mb-4">{{ banner_text }}</p>
+            </div>
+            <div class="col-md-1 d-none d-lg-block"></div>
+            <div class="col-md-4 px-lg-4">
+                <img src="{{ url_for('static', filename='img/banner_img/' + page_name + '.webp') }}" alt="{{ page_name }}" class="img-fluid mt-4 mt-md-0 px-5 px-md-3" />
+            </div>
+        </div>
+    </div>
+</section>

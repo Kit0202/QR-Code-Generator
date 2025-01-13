@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Customization - QR Code Generator{% endblock %}
+
+{% block content %}
+
+<section class="url">
+    <div class="container mt-5 form-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-4 mt-md-0">
+                <h2 class="text-center">Customize QR Code</h2>
+                <form id="customize" method="POST" action="{{ url_for('main.finalize_qr') }}">
+                    <label for="fill_color">Fill Color:</label>
+                    <input type="color" id="fill_color" name="fill_color" value="#000000">
+                
+                    <label for="back_color">Background Color:</label>
+                    <input type="color" id="back_color" name="back_color" value="#ffffff">
+                
+                    <label for="error_correction">Error Correction Level:</label>
+                    <select id="error_correction" name="error_correction">
+                        <option value="L">Low (7%)</option>
+                        <option value="M">Medium (15%)</option>
+                        <option value="Q">Quartile (25%)</option>
+                        <option value="H">High (30%)</option>
+                    </select>
+                
+                    <label for="box_size">Box Size:</label>
+                    <input type="number" id="box_size" name="box_size" value="10" min="1" max="40">
+                
+                    <label for="border">Border Size:</label>
+                    <input type="number" id="border" name="border" value="4" min="1" max="10">
+                
+                    <input type="hidden" name="qr_data" value="{{ qr_data }}">
+                    <input type="hidden" name="name" value="{{ name }}">
+                
+                    <button type="submit" class="cust">Apply Customization</button>
+                </form>
+            </div>
+
+            <div class="col-md-4 mt-3 mt-md-0 mb-5 qr-container">
+                <h5>Your QR Code:</h5>
+                {% if qr_code %}
+                    <img src="{{ qr_code }}" alt="Generated QR Code" class="img-fluid">
+                {% else %}
+                    <img loading="lazy" class="img-fluid" src="{{ url_for('static', filename='img/placeholder.png') }}" alt="QR Code Placeholder">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    fetch(this.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const updatedQR = doc.querySelector('.qr-container img').src;
+        document.querySelector('.qr-container img').src = updatedQR;
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+</script>
+
+
+{% endblock %}

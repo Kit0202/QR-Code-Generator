@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="vcard-container">
+        <div class="vcard-card">
+            <h1>vCard</h1>
+
+            {% if vcard_fields.get('image_url') %}
+                <div class="profile-image">
+                    <h3>Profile Image</h3>
+                    <img src="{{ vcard_fields['image_url'] }}" alt="Profile Image" class="profile-img">
+                </div>
+            {% endif %}
+            {% if vcard_fields.get('name') %}
+                <p><strong>Name:</strong> {{ vcard_fields['name'] }}</p>
+            {% endif %}
+            {% if vcard_fields.get('phone_number') %}
+                <p><strong>Phone Number:</strong> {{ vcard_fields['phone_number'] }}</p>
+            {% endif %}
+            {% if vcard_fields.get('email') %}
+                <p><strong>Email:</strong> {{ vcard_fields['email'] }}</p>
+            {% endif %}
+            {% if vcard_fields.get('company') %}
+                <p><strong>Company:</strong> {{ vcard_fields['company'] }}</p>
+            {% endif %}
+            {% if vcard_fields.get('job_title') %}
+                <p><strong>Job Title:</strong> {{ vcard_fields['job_title'] }}</p>
+            {% endif %}
+            {% if vcard_fields.get('website') %}
+                <p><strong>Website:</strong> <a href="{{ vcard_fields.website }}" target="_blank">{{ vcard_fields['website'] }}</a></p>
+            {% endif %}
+            {% if vcard_fields.get('address') %}
+                <p><strong>Address:</strong> {{ vcard_fields['address'] }}</p>
+            {% endif %}
+            {% if vcard_fields.get('birthday') %}
+                <p><strong>Birthday:</strong> {{ vcard_fields['birthday'] }}</p>
+            {% endif %}
+            <p><a href="{{ url_for('main.download_vcard', qr_id=qr_id) }}" class="btn btn-primary">Download vCard</a></p>
+        </div>
+    </div>
+{% endblock %}

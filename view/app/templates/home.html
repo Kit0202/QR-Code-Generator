@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - QR Code Generator{% endblock %}
+
+{% block content %}
+<section id="background-section">
+<div class="area">
+    <ul class="circles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+
+<div class="container mt-5" id="qr-code-generator">
+<div class="context">
+    <h1 class="text-bold">Generate Your <span class="text-brand">QR Code</span> Instantly</h1>
+    <p class="text-center">Create customized QR codes for URLs, files, and social media links.</p>
+</div>
+
+    <div class="row">
+        <!-- First container box -->
+        <div class="col-md-2 mb-2">
+            <div class="type-card">
+                {% if current_user.is_authenticated %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.url_qr') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="url" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/url.gif') }}" alt="URL/Link" >
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">URL/Link</p>
+                    </div>
+                </a>
+                {% else %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.login') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="url" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/url.gif') }}" alt="URL/Link" >
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">URL/Link</p>
+                    </div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Second container box -->
+        <div class="col-md-2 mb-2">
+            <div class="type-card">
+                {% if current_user.is_authenticated %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.image_qr') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="image" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/image.gif') }}" alt="Image">
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">Image</p>
+                    </div>
+                </a>
+                {% else %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.login') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="url" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/image.gif') }}" alt="URL/Link" >
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">Image</p>
+                    </div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Third container box -->
+        <div class="col-md-2 mb-2">
+            <div class="type-card">
+                {% if current_user.is_authenticated %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.pdf_qr') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="pdf" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/pdf.gif') }}" alt="PDF">
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">PDF</p>
+                    </div>
+                </a>
+                {% else %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.login') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="url" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/pdf.gif') }}" alt="URL/Link" >
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">PDF</p>
+                    </div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Fourth container box -->
+        <div class="col-md-2 mb-2">
+            <div class="type-card">
+                {% if current_user.is_authenticated %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.whatsapp_qr') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="whatsapp" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/whatsapp.gif') }}" alt="WhatsApp" >
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">WhatsApp</p>
+                    </div>
+                </a>
+                {% else %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.login') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="url" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/whatsapp.gif') }}" alt="URL/Link" >
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">WhatsApp</p>
+                    </div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Fifth container box -->
+        <div class="col-md-2 mb-2">
+            <div class="type-card">
+                {% if current_user.is_authenticated %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.vcard_qr') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="vcard" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/card.gif') }}" alt="vCard" >
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">vCard</p>
+                    </div>
+                </a>
+                {% else %}
+                <a class="text-decoration-none type-card-link text-reset" href="{{ url_for('main.login') }}" data-action="click->new-landing#gtagClick" data-new-landing-label-param="url" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/card.gif') }}" alt="URL/Link" >
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">vCard</p>
+                    </div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sixth container box -->
+        <div class="col-md-2 mb-2">
+            <div class="type-card">
+                <a class="text-decoration-none type-card-link text-reset" href="/qr-code-generator/youtube" data-action="click->new-landing#gtagClick" data-new-landing-label-param="youtube" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/youtube.gif') }}" alt="YouTube">
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">YouTube</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Seventh container box -->
+        <div class="col-md-2 mb-2">
+            <div class="type-card">
+                <a class="text-decoration-none type-card-link text-reset" href="/qr-code-generator/music" data-action="click->new-landing#gtagClick" data-new-landing-label-param="music" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/music.gif') }}" alt="Music" width="38" height="38">
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">Music</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <div class="type-card">
+                <a class="text-decoration-none type-card-link text-reset" href="/qr-code-generator/music" data-action="click->new-landing#gtagClick" data-new-landing-label-param="music" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/text.gif') }}" alt="Music" width="38" height="38">
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">Text</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <div class="type-card">
+                <a class="text-decoration-none type-card-link text-reset" href="/qr-code-generator/music" data-action="click->new-landing#gtagClick" data-new-landing-label-param="music" data-new-landing-type-param="button">
+                    <div class="type-card-insert rounded-4">
+                        <div class="text-center mb-2">
+                            <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/text.gif') }}" alt="Music" width="38" height="38">
+                        </div>
+                        <p class="mb-0 fw-bold text-center type-card-title">Text</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<section>
+    <div class="container mt-n5 mt-md-n6">
+        <div class="row">
+            <div class="col-12">
+                <div class="card-group" style="box-shadow: rgba(0, 64, 128, 0.2) 0px 10px 40px -10px;">
+                    <div class="card border-left-md border-soft">
+                        <div class="card-body text-center">
+                            <h2 class="text-gray mb-0">
+                                <span class="icon-danger mr-2">
+                                    <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/unlimited.gif') }}" alt="Music" width="38" height="38">
+                                </span>
+                            </h2>
+                            <h6 class="font-weight-bold mb-2">Unlimited Scans</h6>
+                        </div>
+                    </div> 
+                    <div class="card border-left-md border-soft">
+                        <div class="card-body text-center">
+                            <h2 class="text-gray mb-0">
+                                <span class="icon-danger mr-2">
+                                    <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/track.gif') }}" alt="Music" width="38" height="38">
+                                </span>
+                            </h2>
+                            <h6 class="font-weight-bold mb-2">Track QR Codes</h6>
+                        </div>
+                    </div> 
+                    <div class="card border-left-md border-soft">
+                        <div class="card-body text-center">
+                            <h2 class="text-gray mb-0">
+                                <span class="icon-danger mr-2">
+                                    <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/color.gif') }}" alt="Music" width="38" height="38">
+                                </span>
+                            </h2>
+                            <h6 class="font-weight-bold mb-2">Choose Color &amp; Shape</h6>
+                        </div>
+                    </div> 
+                    <div class="card border-left-md border-soft">
+                        <div class="card-body text-center">
+                            <h2 class="text-gray mb-0">
+                                <span class="icon-danger mr-2">
+                                    <img loading="lazy" class="img-fluid type-card-img mx-auto" src="{{ url_for('static', filename='img/home/photo.gif') }}" alt="Music" width="38" height="38">
+                                </span>
+                            </h2>
+                            <h6 class="font-weight-bold mb-2">Add Logos to QR Codes</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container mt-5">
+        <h2 class="text-title text-center mb-lg-4 mb-2 mt-lg-4 mt-1">Create QR Code in 3 Steps</h2>
+        <div class="row pt-4 pb-lg-5">
+            <div class="col-md-4 col-9 mb-4 mb-md-0">
+                <a class="text-decoration-none h-100" href="#qr-code-generator" data-action="click->new-landing#gtagClick" data-new-landing-label-param="choose_the_type" data-new-landing-type-param="link">
+                    <div class="py-lg-5 py-3 bg-white rounded-2 text-center border h-100 d-flex flex-column justify-content-center">
+                        <div class="mb-4 px-4">
+                            <img loading="lazy" class="img-fluid" src="{{ url_for('static', filename='img/home/login.png') }}" alt="main-page-img">
+                        </div>
+                        <div class="fw-bold py-1 px-2 text-primary bg-primary bg-opacity-10 mx-auto rounded mb-3 d-inline-block">
+                            <small>Step 1</small>
+                        </div>
+                        <p class="text-center text-title fw-bold text-capitalize step-title mb-0">Login/Register</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 col-9 mb-4 mb-md-0">
+                <a class="text-decoration-none h-100" href="#qr-code-generator" data-action="click->new-landing#gtagClick" data-new-landing-label-param="generate_qr_code" data-new-landing-type-param="link">
+                    <div class="py-lg-5 py-3 bg-white rounded-2 text-center border h-100 d-flex flex-column justify-content-center">
+                        <div class="mb-4 px-4">
+                            <img loading="lazy" class="img-fluid" src="{{ url_for('static', filename='img/home/form.png') }}" alt="main-page-img">
+                        </div>
+                        <div class="fw-bold py-1 px-2 text-primary bg-primary bg-opacity-10 d-inline-block rounded mb-3">
+                            <small>Step 2</small>
+                        </div>
+                        <p class="text-center text-title fw-bold step-title text-capitalize mb-0">Fill in the detail</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 col-9">
+                <a class="text-decoration-none h-100" href="#qr-code-generator" data-action="click->new-landing#gtagClick" data-new-landing-label-param="customize_download" data-new-landing-type-param="link">
+                    <div class="py-lg-5 py-3 bg-white rounded-2 text-center border h-100 d-flex flex-column justify-content-center">
+                        <div class="mb-4 px-4">
+                            <img loading="lazy" class="img-fluid" src="{{ url_for('static', filename='img/home/generate.png') }}" alt="main-page-img">
+                        </div>
+                        <div class="fw-bold py-1 px-2 text-primary bg-primary bg-opacity-10 d-inline-block rounded mb-3">
+                            <small>Step 3</small>
+                        </div>
+                        <p class="text-center text-title fw-bold step-title text-capitalize mb-0">Generate QR</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% include 'trust_by_section.html' %}
+
+<section class="section_why py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-5 px-xl-5 d-none d-md-block">
+                <img loading="lazy" src="{{ url_for('static', filename='img/home/why_us.webp') }}" alt="Home Content" class="img-fluid px-xl-4">
+            </div>
+            <div class="col-lg-1 d-none d-xl-block"></div>
+            <div class="col-md-7 col-lg-6">
+                <h2>Why Choose <span class="text-brand-primary-light">Us</span> ?</h2>
+                <div class="col-sm-10 mx-auto py-3 px-5 d-md-none">
+                    <img loading="lazy" src="{{ url_for('static', filename='img/home/why_us.webp') }}" alt="Home Content" class="img-fluid">
+                </div>
+                <ul class="text-neutral-grey pl-4">
+                    <li><strong>QR Code Statistics</strong></li>
+                    <li><strong>Customized Colors & Shapes for QR Codes</strong></li>
+                    <li><strong>No Coding Required</strong></li>
+                    <li><strong>Fully customized landing pages</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-lg sectionlg2 bg-green text-white">
+    <div class="container">
+        <div class="row row-grid align-items-center">
+            <div class="col-12 col-lg-5">
+                <span class="h5 text-muted font-weight-normal mb-2 d-block">What are QR Codes?</span>
+                <h2 class="h1 font-weight-bolder mb-4">QR Codes stands for 'Quick Response'</h2>
+                <p class="lead text-muted text-start">
+                    They were created in 1994 by Denso Wave to track vehicles during manufacturing. They quickly gained popularity when it spread to smartphones.
+                    <br>You can now even scan QR Codes from your phone camera.<br><br>
+                </p>
+                <a href="#" class="btn-grad">Generate QR Code
+                    <span class="icon icon-xs ml-2">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </span>
+                </a>
+            </div>
+            <div class="col-12 col-lg-6 ml-lg-auto">
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <div class="card bg-white shadow-soft rounded mb-4" style="color: #67799e;">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4" style="font-size: 2.5em;">
+                                    <i class="far fa-comment-dots"></i>
+                                </span>
+                                <h5 class="font-weight-normal" style="color: #67799e;">Gather Feedback</h5>
+                                <p>You can ask users to give some feedback when they scan the QR Code.</p>
+                            </div>
+                        </div>
+                        <div class="card bg-white shadow-soft rounded mb-4" style="color: #67799e;">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4">
+                                    <i class="fas fa-briefcase" style="font-size: 2.5em;"></i>
+                                </span>
+                                <h5 class="font-weight-normal" style="color: #67799e;">Describe your Business</h5>
+                                <p>You can redirect your clients to some instruction page for your business when they scan the QR Code.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 pt-lg-5">
+                        <div class="card bg-white shadow-soft rounded mb-4" style="color: #67799e;">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4">
+                                    <i class="far fa-id-card" style="font-size: 2.5em;"></i>
+                                </span>
+                                <h5 class="font-weight-normal" style="color: #67799e;">Profile Cards</h5>
+                                <p>Physical profile cards are every day more rare and digital profile cards are a great alternative.</p>
+                            </div>
+                        </div>
+                        <div class="card bg-white shadow-soft rounded mb-4" style="color: #67799e;">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4">
+                                    <i class="fas fa-bullhorn" style="font-size: 2.5em;"></i>
+                                </span>
+                                <h5 class="font-weight-normal" style="color: #67799e;">Promote Events & Discounts</h5>
+                                <p>You can promote any event or give discount codes when people scan the QR Code.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

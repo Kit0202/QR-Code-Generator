@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}WhatsApp - QR Code Generator{% endblock %}
+
+{% block content %}
+
+<section class="url">
+    <div class="container mt-5 form-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-4 mt-md-0">
+                <h2 class="text-center">Create WhatsApp QR Code</h2>
+                <form action="" method="POST">
+                    <div class="row mb-3">
+                        <div class="col-md-4 position-relative">
+                            <label for="country_code" class="form-label">Country Code</label>
+                            <select class="form-control" id="country_code" name="country_code" required>
+                                <option value="60">+60 Malaysia</option>
+                                <option value="1">+1 USA</option>
+                                <option value="44">+44 UK</option>
+                                <option value="91">+91 India</option>
+                                <option value="354">+354 Iceland</option>
+
+                                <!-- Add more country codes as needed -->
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="phone_number" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Enter phone number" inputmode="numeric" pattern="[0-9]*" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message (optional)</label>
+                        <input type="text" class="form-control" id="message" name="message" placeholder="Enter an optional message">
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">QR Code Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name your QR" required>
+                    </div>
+                    <button type="submit" class="generate-btn">Generate QR Code</button>
+                </form>
+            </div>
+
+            <div class="col-md-4 mt-3 mt-md-0 mb-5 qr-container">
+                <h5>Your QR Code:</h5>
+                {% if qr_code %}
+                    <img src="{{ qr_code }}" alt="Generated QR Code">
+                {% else %}
+                    <img loading="lazy" class="img-fluid" src="{{ url_for('static', filename='img/placeholder.png') }}" alt="QR Code Placeholder">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.getElementById('phone_number').addEventListener('input', function (e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+</script>
+
+{% endblock %}
+
+
