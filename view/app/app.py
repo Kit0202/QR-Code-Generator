@@ -14,9 +14,12 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 import os
 import io
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 import re
 from datetime import datetime
+from qrcode.image.styledpil import StyledPilImage
+from qrcode.image.styles.moduledrawers import SquareModuleDrawer, CircleModuleDrawer, RoundedModuleDrawer, VerticalBarsDrawer, HorizontalBarsDrawer, GappedSquareModuleDrawer
+from qrcode.image.styles.colormasks import SolidFillColorMask
 
 
 app = Flask(__name__)
@@ -62,6 +65,9 @@ class QRCode(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('qrcodes', lazy=True))
     scan_count = db.Column(db.Integer, default=0)
+    
+    def __repr__(self):
+        return f'<QRCode {self.name}>'
     
 @login_manager.user_loader
 def load_user(user_id):
@@ -122,8 +128,10 @@ def register():
 @main.route('/dashboard')
 @login_required
 def dashboard():
-    user_qrcodes = QRCode.query.filter_by(user_id=current_user.id).all()
-    return render_template('dashboard.html', qrcodes=user_qrcodes)
+    page = request.args.get('page', 1, type=int)
+    per_page = 15  # Number of items per page
+    qr_codes_pagination = QRCode.query.filter_by(user_id=current_user.id).paginate(page=page, per_page=per_page)
+    return render_template('dashboard.html', qr_codes_pagination=qr_codes_pagination)
 
 @main.route('/delete_qr/<int:qr_id>', methods=['POST'])
 @login_required
@@ -282,8 +290,6 @@ def image_qr():
             return redirect(url_for('main.customize_qr'))
 
     return render_template('image_qr.html')
-
-
 
 @main.route('/display_file/<filename>')
 def display_file(filename):
@@ -534,6 +540,7 @@ def customize_qr():
     qr_data = session.get('qr_data')
     name = session.get('name')
     qr_type = session.get('qr_type')
+    qr_id = session.get('qr_id')
 
     return render_template('customize.html', qr_data=qr_data, name=name, qr_type=qr_type)
 
@@ -546,11 +553,57 @@ def finalize_qr():
     qr_type = session.get('qr_type')
     qr_id = session.get('qr_id')
     
-    fill_color = request.form.get('fill_color')
-    back_color = request.form.get('back_color')
+    fill_color = ImageColor.getrgb(request.form.get('fill_color', '#000000'))
+    back_color = ImageColor.getrgb(request.form.get('back_color', '#ffffff'))
     error_correction = request.form.get('error_correction', 'L')
     box_size = int(request.form.get('box_size', 10))
     border = int(request.form.get('border', 4))
+    dot_shape = request.form.get('dot_shape', 'square')
+    marker_border_shape = request.form.get('marker_border_shape', 'square')
+    marker_center_shape = request.form.get('marker_center_shape', 'square')
+    qr_text = request.form.get('qr_text', '').strip()
+    text_position = request.form.get('text_position', 'below')
+    text_font_size = int(request.form.get('text_font_size', 40))
+    text_font_style = request.form.get('text_font_style', 'arial')
+    text_color = ImageColor.getrgb(request.form.get('text_color', '#000000'))
+    
+    
+    # Avoid pure black background with black dots
+    if back_color == (0, 0, 0):
+        back_color = (1, 1, 1)  # Adjust slightly to ensure visibility
+    
+    # Map the shape options to qrcode-artistic styles
+    dot_shapes = {
+        "square": SquareModuleDrawer(),
+        "circle": CircleModuleDrawer(),
+        "rounded": RoundedModuleDrawer(),
+        "vertical_bars": VerticalBarsDrawer(),
+        "horizontal_bars": HorizontalBarsDrawer(),
+        "gapped_square": GappedSquareModuleDrawer(),
+    }
+    marker_border_shapes = {
+        "square": SquareModuleDrawer(),
+        "circle": CircleModuleDrawer(),
+        "rounded": RoundedModuleDrawer(),
+        "vertical_bars": VerticalBarsDrawer(),
+        "horizontal_bars": HorizontalBarsDrawer(),
+        "gapped_square": GappedSquareModuleDrawer(),
+    }
+    marker_center_shapes = {
+        "square": SquareModuleDrawer(),
+        "circle": CircleModuleDrawer(),
+        "rounded": RoundedModuleDrawer(),
+        "gapped_square": GappedSquareModuleDrawer(), 
+    }
+    
+    FONT_MAP = {
+        'arial': 'arial.ttf',
+        'times': 'view/app/fonts/times.ttf',
+        'courier': 'view/app/fonts/courier.ttf',
+        'calibri': 'view/app/fonts/calibri.ttf',
+        'italic': 'view/app/fonts/italic.ttf',
+        'bold': 'view/app/fonts/bold.ttf',
+    }
 
     # Recreate QR code with updated settings
     qr = qrcode.QRCode(
@@ -564,17 +617,88 @@ def finalize_qr():
         box_size=box_size,
         border=border,
     )
-    
-    if qr_type == 'vcard':
-        # Use the vCard data stored in the session
-        qr.add_data(url_for('main.view_vcard', qr_id=qr_id, _external=True))
-    else:
-        qr.add_data(qr_data)
+    # Generate the QR code with the URL pointing to the scan_qr route
+    qr.add_data(qr_data)
+    # qr_url = url_for('main.scan_qr', qr_id=qr_id, _external=True)
+    # qr.add_data(qr_url)
     
     qr.make(fit=True)
 
     # Generate the image with custom colors
-    img = qr.make_image(fill_color=fill_color, back_color=back_color)
+    img = qr.make_image(
+        image_factory=StyledPilImage,
+        module_drawer=dot_shapes.get(dot_shape, SquareModuleDrawer()),
+        eye_drawer=marker_border_shapes.get(marker_border_shape, SquareModuleDrawer()),
+        eye_inner_drawer=marker_center_shapes.get(marker_center_shape, SquareModuleDrawer()),
+        color_mask=SolidFillColorMask(
+            front_color=fill_color,
+            back_color=back_color
+        ),
+    )
+    
+    # Handle logo overlay
+    logo = request.files.get('logo')
+    predefined_logo = request.form.get('predefined_logo')
+    logo_img = None
+
+    if logo:
+        logo_img = Image.open(io.BytesIO(logo.read())).convert("RGBA")
+    elif predefined_logo and predefined_logo != 'custom':
+        # Construct the absolute path for the predefined logo
+        logo_path = os.path.join(os.getcwd(),'view', 'app', 'static', 'img', 'logos', f'{predefined_logo}.png')
+        logo_path = logo_path.replace(os.sep, '/')  # Ensure compatibility with forward slashes
+
+        # Check if the file exists and load it
+        if os.path.exists(logo_path):
+            try:
+                logo_img = Image.open(logo_path).convert("RGBA")
+            except Exception as e:
+                return redirect(url_for('main.customize_qr'))
+        else:
+            flash(f'Selected predefined logo "{predefined_logo}" not found at {logo_path}.', 'error')
+    else:
+        logo_img = None
+
+    if logo_img:
+        # Calculate logo size and position
+        img_w, img_h = img.size
+        logo_size = min(img_w, img_h) // 6  # Logo size is 1/6th of the QR code size
+        logo_img = logo_img.resize((logo_size, logo_size), Image.LANCZOS)
+        
+        pos = ((img_w - logo_size) // 2, (img_h - logo_size) // 2)
+        img.paste(logo_img, pos, mask=logo_img.split()[3])
+    else:
+        flash('Logo not found. Please select a valid predefined logo or upload a custom logo.', 'error')
+        
+        
+    # Add text if provided
+    if qr_text:
+        draw = ImageDraw.Draw(img)
+        font_path = FONT_MAP.get(text_font_style, 'view/app/fonts/arial.ttf')  # Default to Arial if not found
+        try:
+            font = ImageFont.truetype(font_path, text_font_size)
+        except IOError:
+            font = ImageFont.load_default()
+
+        text_width, text_height = draw.textbbox((0, 0), qr_text, font=font)[2:]
+        
+        # Resize the canvas to include space for the text
+        if img.mode != 'RGBA':
+            img = img.convert('RGBA')
+
+        img_width, img_height = img.size
+        if text_position == 'above':
+            new_img = Image.new('RGBA', (img_width, img_height + text_height + 10), back_color)
+            new_img.paste(img, (0, text_height + 1))
+            text_position = (img_width // 2 - text_width // 2, 0)
+        else:  # Below
+            new_img = Image.new('RGBA', (img_width, img_height + text_height + 10), back_color)
+            new_img.paste(img, (0, 0))
+            text_position = (img_width // 2 - text_width // 2, img_height + 1)
+
+        draw = ImageDraw.Draw(new_img)
+        draw.text(text_position, qr_text, fill=text_color, font=font)
+        img = new_img
 
     # Convert to base64 for rendering
     img_io = BytesIO()
@@ -597,8 +721,7 @@ def finalize_qr():
 
     # Pass the QR code back to the template for display
     qr_code = f"data:image/png;base64,{qr_base64}"
-    flash('QR Code customized successfully!', 'success')
-
+    
     return render_template(
         'customize.html',
         qr_code=qr_code,
@@ -607,31 +730,24 @@ def finalize_qr():
         qr_type=qr_type,  # Pass qr_type to the template as well
     )
     
-@app.route('/track/<int:qr_id>')
-def track_qr_scan(qr_id):
-    qr_entry = QRCode.query.get_or_404(qr_id)
+@main.route('/scan_qr/<int:qr_id>', methods=['GET'])
+def scan_qr(qr_id):
+    qr_code = QRCode.query.get(qr_id)
+    if qr_code:
+        qr_code.scan_count += 1
+        db.session.commit()
+        return redirect(qr_code.data)  # Assuming qr_code.data contains the URL
+    else:
+        return "QR Code not found", 404
 
-    # Increment scan count
-    qr_entry.scan_count = qr_entry.scan_count + 1 if qr_entry.scan_count else 1
-    db.session.commit()
-
-    # Redirect based on QR type
-    if qr_entry.type in ['url', 'image', 'pdf', 'whatsapp']:
-        return redirect(qr_entry.data)
-    elif qr_entry.type == 'vcard':
-        response = make_response(qr_entry.vcard_data)
-        response.headers['Content-Type'] = 'text/vcard'
-        response.headers['Content-Disposition'] = f'attachment; filename="{qr_entry.name}.vcf"'
-        return response
-
-    flash("Invalid QR code type.", "danger")
-    return redirect(url_for('main.index'))
-
-@app.route('/analytics')
+@main.route('/analytics', methods=['GET'])
 @login_required
 def analytics():
-    qr_codes = QRCode.query.filter_by(user_id=current_user.id).all()
-    return render_template('analytics.html', qr_codes=qr_codes)
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    qr_codes_pagination = QRCode.query.filter_by(user_id=current_user.id).paginate(page=page, per_page=per_page)
+    
+    return render_template('analytics.html', qr_codes_pagination=qr_codes_pagination)
 
 
 # New page route with dynamic variables
@@ -651,7 +767,7 @@ app.register_blueprint(main)
 
 app.jinja_loader = ChoiceLoader([
     app.jinja_loader,
-    FileSystemLoader('C:/Users/YCK7T/OneDrive/文档/qr-code-generator/view/app/partials')
+    FileSystemLoader('C:/Users/YCK7T/Documents/qr-code-generator/view/app/partials')
 ])
 
 with app.app_context():

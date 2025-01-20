@@ -1652,3 +1652,85 @@ select {
 .customize-vcard .alert {
     margin-top: 20px;
 }
+
+#qr_text::placeholder {
+    color: #aaadb1; /* Replace with your desired color */
+    opacity: 1; /* Optional: ensures full opacity of the placeholder */
+}
+
+.predefined-logo-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.predefined-logo-item {
+    cursor: pointer;
+    display: inline-block;
+    border: 2px solid #ddd;
+    padding: 10px; /* Add padding for spacing inside the box */
+    border-radius: 5px;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    width: 80px; /* Set a fixed width for the logo box */
+    height: 80px; /* Set a fixed height for the logo box */
+    box-sizing: border-box; /* Ensure padding doesn't affect the box size */
+    overflow: hidden; /* Hide any overflowing parts of the logo */
+}
+
+.predefined-logo-item.selected {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.predefined-logo {
+    max-width: 100%; /* Scale the logo to fit within the box */
+    max-height: 100%; /* Ensure the logo height fits within the box */
+    object-fit: contain; /* Ensure the logo maintains its aspect ratio */
+}
+
+.dot-shape-select option {
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 30px; /* Adjust based on image size */
+}
+
+.form-section {
+    margin-bottom: 15px;
+}
+
+.form-section h4 {
+    text-align: left; 
+    margin-left: -30px;
+    font-weight: bold;
+}
+
+small.text-muted {
+    font-size: 0.8rem; /* Makes the small text slightly smaller */
+    color: #6c757d; /* Muted gray color */
+    margin-top: 5px; /* Adds space above the small text */
+}
+
+.analytics-container {
+    margin-top: 50px;
+}
+.analytics-header {
+    margin-bottom: 30px;
+}
+.table-responsive {
+    margin-top: 20px;
+}
+.table thead {
+    background-color: #343a40;
+    color: white;
+}
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+.table td, .table th {
+    vertical-align: middle;
+}
+.pagination {
+    justify-content: center;
+}

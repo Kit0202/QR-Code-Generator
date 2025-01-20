@@ -27,7 +27,7 @@
                 <!-- QR Code List -->
                 <h2>Your QR Codes:</h2>
                 <div class="row">
-                    {% for qr in qrcodes %}
+                    {% for qr in qr_codes_pagination.items %}
                     <div class="col-md-4 mb-3 qr-container">
                         <div class="card card-custom">
                             <img src="data:image/png;base64,{{ qr.data }}" class="card-img-top" alt="QR Code">
@@ -49,6 +49,47 @@
                     {% endfor %}
                 </div>
             </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if qr_codes_pagination.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.dashboard', page=qr_codes_pagination.prev_num) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </span>
+                    </li>
+                    {% endif %}
+                    {% for page_num in qr_codes_pagination.iter_pages() %}
+                    {% if page_num %}
+                    {% if page_num == qr_codes_pagination.page %}
+                    <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('main.dashboard', page=page_num) }}">{{ page_num }}</a></li>
+                    {% endif %}
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if qr_codes_pagination.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.dashboard', page=qr_codes_pagination.next_num) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
         </div>
     </div>
