@@ -5,6 +5,12 @@
 {% block content %}
 
 <section class="url">
+    <div id="fullscreen-loader" class="fullscreen-loader" style="display: none;">
+        <div class="spinner">
+            <div class="spinner1"></div>
+        </div>
+    </div>
+    
     <div class="container mt-5 form-container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -145,22 +151,55 @@
 
 <script>
     document.querySelector('form').addEventListener('submit', function (e) {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
 
     const formData = new FormData(this);
+    const fullscreenLoader = document.getElementById('fullscreen-loader');
+
+    // Show the fullscreen loader
+    fullscreenLoader.style.display = 'flex';
+
     fetch(this.action, {
         method: 'POST',
         body: formData
     })
-    .then(response => response.text())
-    .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const updatedQR = doc.querySelector('.qr-container img').src;
-        document.querySelector('.qr-container img').src = updatedQR;
-    })
-    .catch(error => console.error('Error:', error));
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const updatedQR = doc.querySelector('.qr-container img').src;
+
+            // Update the QR code image source
+            const qrImage = document.querySelector('.qr-container img');
+            qrImage.src = updatedQR;
+            qrImage.style.display = 'block';
+            // Show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'QR Code Generated',
+                text: 'Your QR code was successfully customized!',
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Failed to generate QR code. Please try again.',
+                });
+        })
+        .finally(() => {
+            // Hide the fullscreen loader regardless of success or failure
+            fullscreenLoader.style.display = 'none';
+        });
 });
+
+
 </script>
 
 <script>
