@@ -618,7 +618,11 @@ def finalize_qr():
         border=border,
     )
     # Generate the QR code with the URL pointing to the scan_qr route
-    qr.add_data(qr_data)
+    if qr_type == 'vcard':
+        # Use the vCard data stored in the session
+        qr.add_data(url_for('main.view_vcard', qr_id=qr_id, _external=True))
+    else:
+        qr.add_data(qr_data)
     # qr_url = url_for('main.scan_qr', qr_id=qr_id, _external=True)
     # qr.add_data(qr_url)
     
