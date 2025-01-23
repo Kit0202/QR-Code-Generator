@@ -16,7 +16,7 @@ import os
 import io
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from qrcode.image.styledpil import StyledPilImage
 from qrcode.image.styles.moduledrawers import SquareModuleDrawer, CircleModuleDrawer, RoundedModuleDrawer, VerticalBarsDrawer, HorizontalBarsDrawer, GappedSquareModuleDrawer
 from qrcode.image.styles.colormasks import SolidFillColorMask
@@ -84,7 +84,22 @@ class RegistrationForm(FlaskForm):
     def __repr__(self):
         return f'<QRScan {self.qr_id} at {self.timestamp}>'
     
-@app.errorhandler(413)
+    
+class Contact(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Optional foreign key
+    name = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), nullable=False)
+    subject = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    submitted_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    user = db.relationship('User', backref='contacts', lazy=True)  # Optional relationship to User
+
+    def __repr__(self):
+        return f"Contact('{self.name}', '{self.email}', '{self.subject}')"
+    
+@main.errorhandler(413)
 def request_entity_too_large(error):
     flash('File is too large. Please upload a smaller file.', 'danger')
     return redirect(request.url)
@@ -205,8 +220,36 @@ def pricing():
                            banner_title='Plans & Pricing',
                            banner_text='Explore our range of plans to find the perfect fit for your needs. Whether you are an individual, a small business , or a large enterprise. Compare the features and benefits of each plan to determine the best value for your requirements. Choose a plan that aligns with your goals and budget, and get started today!')
     
-@main.route('/contact')
+@main.route('/contact', methods=['GET', 'POST'])
 def contact():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        subject = request.form.get('subject')
+        message = request.form.get('message')
+        
+        if not (name and email and subject and message):
+            flash('All fields are required.', 'danger')
+            return redirect(url_for('main.contact'))
+        
+        #Create a new Contact object
+        new_contact = Contact(
+            name=name,
+            email=email,
+            subject=subject,
+            message=message,
+            submitted_at=datetime.now(timezone.utc)
+        )
+        
+        try:
+            db.session.add(new_contact)
+            db.session.commit()
+            flash('Your message has been submitted successfully.', 'success')
+            return redirect(url_for('main.contact'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred while submitting your message. Please try again', 'danger')
+    
     return render_template('contact.html',
                            page_name='contact',
                            banner_title='Contact Us',
@@ -734,15 +777,29 @@ def finalize_qr():
         qr_type=qr_type,  # Pass qr_type to the template as well
     )
     
-@main.route('/scan_qr/<int:qr_id>', methods=['GET'])
+@main.route('/scan/<int:qr_id>')
 def scan_qr(qr_id):
-    qr_code = QRCode.query.get(qr_id)
-    if qr_code:
-        qr_code.scan_count += 1
-        db.session.commit()
-        return redirect(qr_code.data)  # Assuming qr_code.data contains the URL
-    else:
-        return "QR Code not found", 404
+    # Get the QRCode entry by ID
+    qr_entry = QRCode.query.get_or_404(qr_id)
+    
+    # Increment the scan count
+    qr_entry.scan_count += 1
+    db.session.commit()  # Save the updated scan count to the database
+    
+    # Redirect to the QR code's data (e.g., URL)
+    if qr_entry.type == 'url':
+        return redirect(qr_entry.data)
+    elif qr_entry.type == 'image':
+        return redirect(url_for('main.display_file', filename=qr_entry.data))
+    elif qr_entry.type == 'pdf':
+        return redirect(url_for('main.display_pdf', filename=qr_entry.data))
+    elif qr_entry.type == 'whatsapp':
+        return redirect(qr_entry.data)
+    elif qr_entry.type == 'vcard':
+        return render_template('view_vcard.html', qr_id=qr_id)
+
+    # For unsupported types, show an error
+    flash('Invalid QR code type.', 'danger')
 
 @main.route('/analytics', methods=['GET'])
 @login_required

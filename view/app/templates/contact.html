@@ -8,18 +8,29 @@
 
 <section class="contact-section py-5">
     <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
         <h2 class="text-center text-bold mb-5">Inform Us</h2>
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="contact-form">
-                    <form action="/contact-submit" method="POST">
+                    <form action="/contact" method="POST" id="contact-form">
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" placeholder="Jack" class="form-control" id="name" name="name" required>
+                            <input type="text" placeholder="Jack" class="form-control" id="name" name="name" value="{{ current_user.username }}" required>
                         </div>
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email" placeholder="jack@example.com" class="form-control" id="email" name="email" required>
+                            <input type="email" placeholder="jack@example.com" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
                         </div>
                         <div class="form-group">
                             <label for="subject">Subject</label>
@@ -29,19 +40,39 @@
                             <label for="message">Message</label>
                             <textarea class="form-control" placeholder="Hi! I would like to..." id="message" name="message" rows="5" required></textarea>
                         </div>
-                        <button type="submit" class="btn-submit">
-                            <span class="circle1"></span>
-                            <span class="circle2"></span>
-                            <span class="circle3"></span>
-                            <span class="circle4"></span>
-                            <span class="circle5"></span>
-                            <span class="text">Submit</span>
+                        <div class="form-actions d-flex">
+                            <button type="button" class="btn-reset" id="clear-button">
+                                <span class="circle1"></span>
+                                <span class="circle2"></span>
+                                <span class="circle3"></span>
+                                <span class="circle4"></span>
+                                <span class="circle5"></span>
+                                <span class="text">Clear</span></button>
+                            <button type="submit" class="btn-submit">
+                                <span class="circle1"></span>
+                                <span class="circle2"></span>
+                                <span class="circle3"></span>
+                                <span class="circle4"></span>
+                                <span class="circle5"></span>
+                                <span class="text">Submit</span>
                         </button>
+                    </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+    // Clear button functionality
+    document.getElementById('clear-button').addEventListener('click', function() {
+        // Reset the form fields
+        document.getElementById('contact-form').reset();
+        // Clear the dynamically populated fields
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+    });
+</script>
 
 {% endblock %}
