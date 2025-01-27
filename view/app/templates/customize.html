@@ -117,6 +117,9 @@
 
                     <label>Or Choose a Predefined Logo:</label>
                     <div id="predefined_logo" class="predefined-logo-box">
+                        <div class="predefined-logo-item" data-logo="none">
+                            <img src="{{ url_for('static', filename='img/logos/empty.png') }}" alt="Logo 1" class="predefined-logo">
+                        </div>
                         <div class="predefined-logo-item" data-logo="logo1">
                             <img src="{{ url_for('static', filename='img/logos/logo1.png') }}" alt="Logo 1" class="predefined-logo">
                         </div>

@@ -60,6 +60,7 @@ class QRCode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     data = db.Column(db.Text, nullable=False)  # Store the QR code image as base64
+    redirect_url = db.Column(db.Text, nullable=True)  # Store the URL to redirect to
     vcard_data = db.Column(db.Text, nullable=True)  # Store vCard data
     type = db.Column(db.String(50), nullable=False)  # New field to indicate the type of QR code (e.g., 'url', 'image')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -270,7 +271,7 @@ def url_qr():
         name = request.form['name']
         
         # Create a QRCode entry in the database
-        qr_entry = QRCode(name=name, data='', vcard_data=None, type='url', user_id=current_user.id)
+        qr_entry = QRCode(name=name, data='', redirect_url=url, vcard_data=None, type='url', user_id=current_user.id)
         db.session.add(qr_entry)
         db.session.commit()  # Save to generate an ID
         
@@ -319,7 +320,7 @@ def image_qr():
             image_url = url_for('static', filename='uploads/' + filename, _external=True)
             
             # Create a QRCode entry in the database
-            qr_entry = QRCode(name=name, data='', vcard_data=None, type='image', user_id=current_user.id)
+            qr_entry = QRCode(name=name, data='', redirect_url=image_url, vcard_data=None, type='image', user_id=current_user.id)
             db.session.add(qr_entry)
             db.session.commit()  # Save to generate an ID
             
@@ -367,7 +368,7 @@ def pdf_qr():
             file_url = url_for('main.display_pdf', filename=filename, _external=True)
             
             # Create a QRCode entry in the database
-            qr_entry = QRCode(name=name, data='', vcard_data=None, type='pdf', user_id=current_user.id)
+            qr_entry = QRCode(name=name, data='', redirect_url=file_url, vcard_data=None, type='pdf', user_id=current_user.id)
             db.session.add(qr_entry)
             db.session.commit()  # Save to generate an ID
             
@@ -412,7 +413,7 @@ def whatsapp_qr():
         whatsapp_url = f"https://wa.me/{country_code}{phone_number}?text={message}"
         
         # Create a QRCode entry in the database
-        qr_entry = QRCode(name=name, data='', vcard_data=None, type='whatsapp', user_id=current_user.id)
+        qr_entry = QRCode(name=name, data='', redirect_url=whatsapp_url, vcard_data=None, type='whatsapp', user_id=current_user.id)
         db.session.add(qr_entry)
         db.session.commit()  # Save to generate an ID
         
@@ -504,7 +505,7 @@ def vcard_qr():
         vcard += "END:VCARD"
         
         # Create a QRCode entry in the database
-        qr_entry = QRCode(name=name, data='', vcard_data=vcard, type='vcard', user_id=current_user.id)
+        qr_entry = QRCode(name=name, data='',redirect_url=vcard, vcard_data=vcard, type='vcard', user_id=current_user.id)
         db.session.add(qr_entry)
         db.session.commit()  # Save to generate an ID
         
@@ -662,12 +663,9 @@ def finalize_qr():
     )
     # Generate the QR code with the URL pointing to the scan_qr route
     if qr_type == 'vcard':
-        # Use the vCard data stored in the session
-        qr.add_data(url_for('main.view_vcard', qr_id=qr_id, _external=True))
+        qr.add_data(url_for('main.scan_qr', qr_id=qr_id, _external=True))
     else:
-        qr.add_data(qr_data)
-    # qr_url = url_for('main.scan_qr', qr_id=qr_id, _external=True)
-    # qr.add_data(qr_url)
+        qr.add_data(url_for('main.scan_qr', qr_id=qr_id, _external=True))
     
     qr.make(fit=True)
 
@@ -777,29 +775,28 @@ def finalize_qr():
         qr_type=qr_type,  # Pass qr_type to the template as well
     )
     
-@main.route('/scan/<int:qr_id>')
+@main.route('/scan_qr/<int:qr_id>', methods=['GET'])
 def scan_qr(qr_id):
-    # Get the QRCode entry by ID
     qr_entry = QRCode.query.get_or_404(qr_id)
     
     # Increment the scan count
     qr_entry.scan_count += 1
-    db.session.commit()  # Save the updated scan count to the database
+    db.session.commit()
     
-    # Redirect to the QR code's data (e.g., URL)
+    # Redirect to the appropriate content based on the QR type
     if qr_entry.type == 'url':
-        return redirect(qr_entry.data)
+        return redirect(qr_entry.redirect_url)
     elif qr_entry.type == 'image':
-        return redirect(url_for('main.display_file', filename=qr_entry.data))
+        return redirect(qr_entry.redirect_url)
     elif qr_entry.type == 'pdf':
-        return redirect(url_for('main.display_pdf', filename=qr_entry.data))
+        return redirect(qr_entry.redirect_url)
     elif qr_entry.type == 'whatsapp':
-        return redirect(qr_entry.data)
+        return redirect(qr_entry.redirect_url)
     elif qr_entry.type == 'vcard':
-        return render_template('view_vcard.html', qr_id=qr_id)
-
-    # For unsupported types, show an error
-    flash('Invalid QR code type.', 'danger')
+        return redirect(url_for('main.view_vcard', qr_id=qr_id))
+    else:
+        flash('Invalid QR code type', 'danger')
+        return redirect(url_for('main.index'))
 
 @main.route('/analytics', methods=['GET'])
 @login_required
